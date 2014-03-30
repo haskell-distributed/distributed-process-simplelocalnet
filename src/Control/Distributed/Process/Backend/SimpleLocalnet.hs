@@ -92,6 +92,7 @@ module Control.Distributed.Process.Backend.SimpleLocalnet
   , terminateAllSlaves
     -- * Master nodes
   , startMaster
+  , startMaster'
   ) where
 
 import System.IO (fixIO)
@@ -397,6 +398,13 @@ startMaster backend proc = do
     redirectLogsHere backend slaves
     proc (map processNodeId slaves) `finally` shutdownLogger
 
+-- | Works like 'startMaster' but without initially finding slaves in
+-- the local network.
+startMaster' :: Backend -> ([NodeId] -> Process ()) -> IO ()
+startMaster' backend proc = do
+  node <- newLocalNode backend
+  Node.runProcess node $ proc [] `finally` shutdownLogger
+  
 --
 -- | shut down the logger process. This ensures that any pending
 -- messages are flushed before the process exits.
