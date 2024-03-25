@@ -30,6 +30,7 @@ Flag build-example
 Library
   Build-Depends:     base >= 4.4 && < 5,
                      bytestring >= 0.9 && < 0.12,
+                     exceptions >= 0.5 && <0.11,
                      network >= 3.0 && < 3.2,
                      network-multicast >= 0.1.1 && < 0.4,
                      data-accessor >= 0.2 && < 0.3,
