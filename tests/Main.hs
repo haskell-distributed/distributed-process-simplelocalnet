@@ -20,24 +20,24 @@ testDiscoverNodes :: TestTree
 testDiscoverNodes = testCase "discover nodes" $ do
 
   -- Initialize slave nodes
-  forM_ ["8080", "8081", "8082", "8083"] $ \port -> do
+  forM_ ["10000", "10001", "10002", "10003"] $ \port -> do
     backend <- initializeBackend "127.0.0.1" port initRemoteTable
     _ <- forkIO $ startSlave backend
     threadDelay 100000
   
   -- initialize master node
   discoveredNodesSlot <- MVar.newEmptyMVar
-  backend <- initializeBackend "127.0.0.1" "8084" initRemoteTable
+  backend <- initializeBackend "127.0.0.1" "10004" initRemoteTable
   startMaster backend $ \nds -> do
     terminateAllSlaves backend
     liftIO $ MVar.putMVar discoveredNodesSlot nds
 
   discoveredNodes <- (List.sort . List.nub) <$> MVar.readMVar discoveredNodesSlot
   assertEqual "Discovered nodes" 
-              [ "nid://127.0.0.1:8080:0"
-              , "nid://127.0.0.1:8081:0"
-              , "nid://127.0.0.1:8082:0"
-              , "nid://127.0.0.1:8083:0"
+              [ "nid://127.0.0.1:10000:0"
+              , "nid://127.0.0.1:10001:0"
+              , "nid://127.0.0.1:10002:0"
+              , "nid://127.0.0.1:10003:0"
               ] 
               (map show discoveredNodes)
 
